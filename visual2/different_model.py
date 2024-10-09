@@ -36,9 +36,9 @@ class TupleToBoxWrapper(gym.ObservationWrapper):
         return stacked_obs
 
 
-def create_env(env_path, worker_id=1, time_scale=2.0, no_graphics=True):
+def create_env(env_path, worker_id=832, time_scale=2.0, no_graphics=True):
     channel = EngineConfigurationChannel()
-    unity_env = UnityEnvironment(env_path, side_channels=[channel], worker_id=worker_id, no_graphics=no_graphics, base_port=384)
+    unity_env = UnityEnvironment(env_path, side_channels=[channel], worker_id=worker_id, no_graphics=no_graphics, base_port=7532)
     channel.set_configuration_parameters(time_scale=time_scale)
     
     gym_env = UnityToGymWrapper(unity_env, allow_multiple_obs=True)
@@ -113,7 +113,7 @@ if __name__ == '__main__':
 
     model_name = 'BTR'
     save_path_scene1 = get_save_path(base_path, model_name)
-    checkpoint_callback_scene1 = CheckpointCallback(save_freq=250000, save_path=save_path_scene1, name_prefix=model_name)
+    checkpoint_callback_scene1 = CheckpointCallback(save_freq=50000, save_path=save_path_scene1, name_prefix=model_name)
 
     policy_kwargs = dict(
         features_extractor_class=None,  
@@ -127,12 +127,12 @@ if __name__ == '__main__':
     device = th.device("cuda" if th.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
 
-    agent = Agent(n_actions=6, input_dims=[10, 84, 84], device=th.device('cpu'), num_envs=1,
+    agent = Agent(n_actions=6, input_dims=[5, 84, 84], device=th.device('cuda'), num_envs=1,
               	agent_name="Visual_Agent", total_frames=200000000, testing=0, batch_size=32, rr=1, lr=1e-4,
               	maxpool_size=6, ema=0, trust_regions=0, target_replace=32000, ema_tau=0.01,
               	noisy=1, spectral=1, munch=1, iqn=1, double=0, dueling=1, impala=1,
               	discount=0.997, adamw=0, discount_anneal=0,
-              	per=1, taus=8, model_size=0.5, linear_size=64,
+              	per=1, taus=8, model_size=2, linear_size=256,
               	ncos=64, maxpool=0, replay_period=4,
               	analytics=0, pruning=0, framestack=1, arch="impala",
               	per_alpha=0.2, per_beta_anneal=0, layer_norm=1,
@@ -188,7 +188,7 @@ if __name__ == '__main__':
 
         observation = observation_
 
-        if steps % 100 == 0 and len(scores) > 0:
+        if steps % 1200 == 0 and len(scores) > 0:
             avg_score = np.mean(scores_temp[-50:])
             if episodes % 1 == 0:
                 print('{} {} avg score {:.2f} total_steps {:.0f} fps {:.2f}'
