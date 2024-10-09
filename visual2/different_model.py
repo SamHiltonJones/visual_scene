@@ -97,7 +97,7 @@ if __name__ == '__main__':
     num_envs = 1
     agent_name = 'trial'
     game = 'game'
-    env = r"C:\methods_compare\builds\post_sub_builds\visual_scene\3DPos.exe"
+    env = r"linux_visual/3DPos.x86_64"
     
     def make_env_scene1(worker_id):
         return lambda: create_env(env, worker_id, time_scale=4.0, no_graphics=True)  
